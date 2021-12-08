@@ -80,18 +80,18 @@ We base our architecture on cloudmesh, an open-source hybrid multi-cloud toolkit
 
 \begin{center}
 \pdftooltip{\includegraphics[width=1.0\columnwidth]{images/arch-registry.pdf}
-}{This figure shows the architecture of the catalogue and registry services, as well as the possibility to create new analysis services with GAS.}
+}{This figure shows the architecture of the catalogue and registry services, as well as the possibility to create new analytics services with GAS.}
 \end{center}
 \vspace{-12pt}
 {\em Fig 1. Layered architecture of the cloudmesh Open\-API framework.}
 
-The reason why we need to distinguish Catalogue from Registry is based on the fact that we support with the catalogue findability without going in too much details, while the Registry provides the ability to register the details of interaction with the service, but most importantly the instantiation of such a service to encourage reusability. Furthermore our implementation of the catalouge entries is independent from a RESY specification, the registry makes explicit use of the registry. 
+The reason why we need to distinguish Catalogue from Registry is based on the fact that we support with the catalogue findability without going in too much details, while the Registry provides the ability to register the details of interaction with the service, but most importantly the instantiation of such a service to encourage reusability. Furthermore our implementation of the catalouge entries is independent from a REST specification, the registry makes explicit use of the registry. 
 
 With this division we can first identify candidates form the plethora of services available to us and in a second step evaluate their integration details into a REST service enhanced analytics workflow. Such workflows can also be represented as high level REST services and thus become subject of reusability and deployment in larger analytics service ecosystems. 
 
 
 \section*{AI Service Catalogue.}
-To make it easy for users to obtain a quick overview about available AI cloud services, we have limited the initial set f attributes to those that support findability. The attributes are listed in Tab. 1. The catalogue is organized as a list of entries, where each entry contains a number of attributes. These attributes may be required or optional. 
+To make it easy for users to obtain a quick overview about available AI cloud services, we have limited the initial set of attributes to those that support findability. The attributes are listed in Tab. 1. The catalogue is organized as a list of entries, where each entry contains a number of attributes. These attributes may be required or optional. 
 
 \resizebox{0.9\columnwidth}{!}{%
 \begin{tabular}{p{3cm}p{8cm}p{1cm}}
@@ -171,7 +171,7 @@ Specification &	Pointer to where specification schema is located	& O &  O \\
 AdditionalMetadata	& Pointer to where additional is located including the one here.	& O &	O \\
 SLA	& Serves level agreement including cost	& O 	& O \\
 CachingInterval	&If a service is accessed a lot, the caching interval can be used to put a limitation on the Response with an LRU cache	& O &	N/A \\
-DataIntegration &	In case of big data the data cannot be provided as a parameter to the analysis function. Instead, we need to provide the data as endpoint. However, often tata may need to be uploaded or can be downloaded. In this case this field provides the upload and download endpoints and the protocol to access the data	& O &	O \\
+DataIntegration &	In case of big data the data cannot be provided as a parameter to the analysis function. Instead, we need to provide the data as endpoint. However, often that may need to be uploaded or can be downloaded. In this case this field provides the upload and download endpoints and the protocol to access the data	& O &	O \\
 \hline
 \multicolumn{3}{l}{\OK = Required; O = Optional}
 \end{tabular}
@@ -181,7 +181,7 @@ DataIntegration &	In case of big data the data cannot be provided as a parameter
 
 \section*{Conclusion.}
 
-A service registry can publicize and improve end user access to data from different sources, by overcoming some of the challenges inherent in describing and surfacing document content and format. publication, and discovery of information resources are enriched with metadata enabling the findability and reusability. While describing the interfaces and allow for the instantiation or the reuse of already instantiated services we address the accessibility and interoperability. With respect to analytics as a service, end users should be able to find various analytic services and similar services without having to individually search multiple ‘locations’ or databases, each built to operate on its own, unique storage and retrieval constructs. Through these descriptions automated service integration can be provisioned while targeting not only the functionality involved, but also allowing service level considerations to be addressed. Furthermore, such analytics services could provide significant security implications such as the protection of a database while only exposing a subset of approved analytics functions that are executed on the data sets. This includes partial and controlled sharing of data mashup that can be made available to the community and registered to make reuse easier without everyone having to replicate the service.
+A service registry can publicize and improve end user access to data from different sources by overcoming some of the challenges inherent in describing and distributing document content and format. Publication and discovery of information resources that are enriched with metadata enable the findability and reusability of analytics services. By describing the interfaces and allowing for the instantiation or the reuse of already instantiated services we address accessibility and interoperability requirements. With respect to analytics as a service, end users should be able to find various analytic services and similar services without having to individually search multiple ‘locations’ or databases, each built to operate on its own, with unique storage and retrieval constructs. Through these descriptions, automated service integration can be provisioned while targeting not only the functionality involved, but also allowing service level considerations to be addressed. Furthermore, such analytics services could provide significant security implications such as the protection of a database while only exposing a subset of approved analytics functions that are approved for execution on the data sets. This includes partial and controlled sharing of data mashups that can be made available to the community and registered to make reuse easier without requiring service replication.
 
 {\tiny
 \section*{\footnotesize Acknowledgment.}
