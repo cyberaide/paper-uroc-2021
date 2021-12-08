@@ -1,4 +1,5 @@
-\documentclass[letter,10pt]{article}
+%\documentclass[letter,6pt]{article}
+\documentclass[A0,6pt]{article}
 
 \usepackage[tagged]{accessibility}
 
@@ -19,16 +20,16 @@
 
 \hypersetup{
     pdfauthor={Gregor von Laszewski,
-               Henry TBD,
+               Henry Bobeck,
                Anthony Orlowski,
                Richard Otten},
     pdfsubject={UROC},
-    pdftitle={Towards an AI Service Catalouge and Registry},
+    pdftitle={Towards an AI Service Catalogue and Registry},
     pdfkeywords={multi-cloud, hybrid cloud, AI services, REST, cloudmesh}
 }
 
 \begin{document}
-
+\thispagestyle{empty}
 \vspace{-3.5cm}
 
 
@@ -38,19 +39,19 @@
   colback=red!10,
   colframe=red!75!black]
 
-{\Large\bf Towards Automatically Generated Hybrid Multi-Cloud AI Services} 
+{\Large\bf Towards an AI Service Catalogue and Registry}
 
 
-{\em Gregor von Laszewski,
-Anthony Orlowski,
-Richard Otten,
-Adam Chai$*$,
-Reilly Markowitz$*$,
-Sunny Gandhi$*$,
-and Caleb Wilson, Indiana University
+{\em Gregor von Laszewski$^{1,2}$,
+Henry Bobeck$^{2,*}$,
+Anthony Orlowski$^2$
 
-$*$UROC Students \hfill }
+$^1$University of Virginia, 
+$^2$Indiana University, $^*$IU UROC Students \hfill {\footnotesize Contact:: laszewski\@gmail.com, \url{https://laszewski.github.io}}
+
+}
 \end{tcolorbox}
+\vspace{-24pt}
 \end{figure}
 
 \begin{multicols}{3}
@@ -61,88 +62,135 @@ $*$UROC Students \hfill }
                                      {-1.5ex \@plus -.2ex}% Formerly 1.5ex \@plus .2ex
                                      {\normalfont\normalsize\bfseries\underline}}
 \makeatother
+\footnotesize
 
+\vspace{-24pt}
 \section*{Introduction.}
 
-Data scientists need to develop reusable AI services that can be shared with their colleagues. Typically they lack the expertise to provide such services due to the steep learning curve. We developed a sophisticated but easy to use framework that takes a regular Python function (which data scientists know how to do) and converts it automatically into a secure REST service which adheres to OpenAPI specifications that can be reused in the ecosystem of cloud services. We used this framework to create several AI-based REST services to showcase the approach's validity.
+Cloud providers offer a significant number of analytics services to its user community. Typically a provider advertises its own capabilities without regard of what other providers offer. In such a heterogeneous ecosystem it is difficult to quickly identify potential candidates for cloud services that can be used to bootstrap a sophisticated analytics workflow addressing a particular task. This also includes reuse of services in the same workflow by different providers. 
 
-\vspace{-12pt}
+Developers require two lookup mechanisms. First, they require a high level {\bf catalogue} description of services to identify if they could be of potential use. Second they require a {\bf registry} of services that they use as part of their development. In a previous work we have developed a framework called GAS \cite{las-2021-gas} that allows the creation of REST based analytics services easily from python code. We expand this framework here by allowing analytics services that have a REST interface to be published into a registry, but we also allow with GAS to create REST services and host them in the cloud. 
+
+Through this architecture users have the ability to 
+(1) find quickly potential analytics services (2) find the details of the services (3) register instances of the services in a registry so they can be reused pragmatically  (4) enhance the catalogue and registry with custom designed analytics services (5) build customized catalogues and registries.
+
 \section*{Architecture.}
 
-We based our architecture on cloudmesh, an open-source hybrid multicloud toolkit. We integrated a new component that provides data scientists with the ability to automatically generate these services (see Fig. 1). One of the most important aspects of generating REST services is language independence. For this reason, we use the OpenAPI Specification. This specification defines a standard, and language-agnostic interface to REST APIs. Although the concept of REST is easy to understand, a significant amount of expertise is needed to apply it, which domain scientists may not be interested in but would be keen on reusing without needing to know the details.
+We base our architecture on cloudmesh, an open-source hybrid multi-cloud toolkit. We integrated two new components that provides data scientists with the ability to catalogue and register REST services. Due to our previous effort we also allow the integration of analytics functions to create a REST service that can be provisioned and thus reused. This allows an easy pathway to integrate Services offered by various cloud providers, such as AWS, Azure, Google, and others (see Fig.~1).  
 
 \begin{center}
-\pdftooltip{\includegraphics[width=0.7\columnwidth]{images/openapi-arch-new-2.pdf}
-}{This figure shows the two layers of the Architecture. One is the IaaS Layer, the other is the openapi layer.}
+\pdftooltip{\includegraphics[width=1.0\columnwidth]{images/arch-registry.pdf}
+}{This figure shows the architecture of the catalogue and registry services, as well as the possibility to create new analysis services with GAS.}
 \end{center}
-
+\vspace{-12pt}
 {\em Fig 1. Layered architecture of the cloudmesh Open\-API framework.}
 
-\bigskip
-Hence, our framework allows scientists to focus on their scientific tasks exposed to well-known programming using functions and classes as input to the generator. These functions can have AI services embedded in them. Fig. 3 showcases our automated AI service workflow. 
+The reason why we need to distinguish Catalogue from Registry is based on the fact that we support with the catalogue findability without going in too much details, while the Registry provides the ability to register the details of interaction with the service, but most importantly the instantiation of such a service to encourage reusability. Furthermore our implementation of the catalouge entries is independent from a RESY specification, the registry makes explicit use of the registry. 
+
+With this division we can first identify candidates form the plethora of services available to us and in a second step evaluate their integration details into a REST service enhanced analytics workflow. Such workflows can also be represented as high level REST services and thus become subject of reusability and deployment in larger analytics service ecosystems. 
 
 
+\section*{AI Service Catalogue.}
+To make it easy for users to obtain a quick overview about available AI cloud services, we have limited the initial set f attributes to those that support findability. The attributes are listed in Tab. 1. The catalogue is organized as a list of entries, where each entry contains a number of attributes. These attributes may be required or optional. 
 
-\begin{center}
-\pdftooltip{\includegraphics[width=0.5\columnwidth]{images/architecture-openapi-1.pdf}
-}{This figure shows a sequence of processes between remote client, download data, train, upload, and predict.}
-\end{center}
+\resizebox{0.9\columnwidth}{!}{%
+\begin{tabular}{p{3cm}p{8cm}p{1cm}}
+Name	& Description	& Required \\
+\hline
+ID	& UUID, globally unique	& \OK \\
+Name	& Name of the service	& \OK \\
+Title	& Human readable title 	& \OK \\
+Public	& True if Public 
+(needs use case to delineate what pub private means) & 	\OK \\
+Description	& Human readable short Description of the Service	& \OK \\ 
+Version	& The version number or tag of the service	& \OK \\
+License	& The license description	& \OK \\
+Microservice & 	\OK/No/Mixed	& \OK \\
+Protocol	& REST	& \OK \\
+Owner	& Name of the distributing entity, organization or individual. It could be a vendor.	& \OK \\
+Modified	& Modification Timestamp (when first same as created)	\OK \\
+Created	& Date on which the entry was first created	& \OK \\
+Documentation	& Link to a URL with detailed description of the service	& O \\
+Source	& Link to the source code if available	& O \\
+Tag(s)	& Human readable common tags that are used to identify the service that are associated with the service	& O \\
+Category(s)	& A category that this service belongs to (NLB, Finance, ...)	& O & 
+Specification/ Schema	& Pointer to where schema is located &	O \\
+Additional metadata	& Pointer to where additional is located including the one here.	& O \\
+Endpoint	& The endpoint of the service	& O \\
+SLA/Cost	&	& O \\
+Authors	& contact details of the people or organization responsible for the service (freeform string)	& O \\
+Data	& Description on how data is managed	& O \\
+\hline
+\multicolumn{3}{l}{\OK = Required; O = Optional}
+\end{tabular}
+}
 
-{\em Fig 2. High-level overview of the benchmark test sequence.}
 
+\section*{AI Service Registry} The goal of an analytics service registry is to establish registries to locate and consume analytics services 
+with persistent identifiers across organizations.  It can serve as a public, private, or federated registry. In case of a federated registry, more than one registry can be joined, to provide the user the impression of a single registry.
+Within the analytics services we distinguish two classes. The first class are instantiated (running) services that are offered by a service provider and allow direct reuse. The second class are library providers that distribute analytics activity not as an instantiated service, but as a source code library which can be deployed as a service. The list of attributes are presented in Tab. 2.
 
-\begin{center}
-\pdftooltip{\includegraphics[width=0.6\columnwidth]{images/ai_service_workflow_runtime.pdf}
-}{This figure shows the benchmark results between AWS, Azure, and Google. As the similar VMs are used the time is similar.}
-\end{center}
+\section*{Implementation.}
 
-{\em Fig 3. Comparison of the performance of Eigenface SVM algorithm on various clouds auto-generated from cloudmesh-openapi.}
+The implementation of the catalogue and registry are available in GitHub as open source project. It is building a basis for discussions taking place in the
+NIST big data working group \cite{github-cloudmesh-catalogue}.
 
-\section*{Benchmark.}
+\resizebox{0.9\columnwidth}{!}{%
+\begin{tabular}{p{3cm}p{11cm}p{0.5cm}p{0.5cm}}
+Name	& Description	& \rot{\shortstack{Service\\ provider}}	& \rot{\shortstack{Library\\ provider}} \\
+\hline
+ID & 	UUID, globally unique &	\OK &	\OK \\
+Name & 	Name of the service	& \OK	& \OK \\ 
+Title & 	Human readable title &	\OK	& \OK \\
+Public	& True if Public
+(needs use case to delineate what pub private means) & 	\OK & \OK \\
+Description	& Human readable short Description of the Service	& \OK & 	\OK \\
+Endpoint &	The endpoint of the service	& \OK	&  N/A \\
+List of Input Parameters &
+	A list of parameters to the service. The parameters have each the form of name, function, type, value, access. The type indicates the data type. The access indicates if the parameter is a data stream, database, single value/function, event.
+The function responds to a different function in case multiple are provided by the service.	& \OK	& \OK \\ 
+List of Output Parameters 
+  style (event, stream, data)
+  value
+  timestamp & 
+	List of responses cast by the service. The responses have the form of function, name, type, value, access, timestamp. The type indicates the data type. The access indicates if the parameter is a data stream, database, single value/function, event.
+The function responds to a different function in case multiple are provided by the service. & 	\OK 	& \OK \\
+Version	& The version number or tag of the service	& \OK	& \OK \\
+License	& The license description	& \OK	& \OK \\
+Protocol & 	REST	& \OK	& \OK \\
+Modified & 	Modification Timestamp	& \OK& \OK \\
+Owner	& Name of the distributing entity, organization or individual. It could be a vendor.	& \OK	& O \\
+Author &	Contact details of the people or organization responsible for the service	& O	& \OK \\
+Tags &	Human readable common tags that are used to identify the service that are associated with the service	& O & O \\
+Categories &	A category that this service belongs to (NLB, Finance, ...)	& O & O \\
+Created	& date and time on which the analytics service was instantiated or created	instantiated	& \OK & \OK \\
+Heartbeat &	State and timestamp of the last check when the service was active	& O & 	N/A \\
+Documentation &	Link to a URL with detailed description of the service
+Source	Link to the source code if available	& O & O \\
+Specification &	Pointer to where specification schema is located	& O &  O \\
+AdditionalMetadata	& Pointer to where additional is located including the one here.	& O &	O \\
+SLA	& Serves level agreement including cost	& O 	& O \\
+CachingInterval	&If a service is accessed a lot, the caching interval can be used to put a limitation on the Response with an LRU cache	& O &	N/A \\
+DataIntegration &	In case of big data the data cannot be provided as a parameter to the analysis function. Instead, we need to provide the data as endpoint. However, often tata may need to be uploaded or can be downloaded. In this case this field provides the upload and download endpoints and the protocol to access the data	& O &	O \\
+\hline
+\multicolumn{3}{l}{\OK = Required; O = Optional}
+\end{tabular}
+}
 
-We developed examples based on the reuse of Scikit-learn artificial intelligent algorithms demonstrations. These examples are then run on different cloud services to create comparative performance benchmarks. We conducted the benchmarks on 
-AWS, Azure, and Google. Additional examples conducted on IoT devices and personal computers are discussed in [1]. We also compared the overhead of using the REST services [1].
 
 
 \section*{Conclusion.}
 
-In our benchmarks, we see that the cloud providers, when using similar resources and images, perform similarly (see Fig. 3). For small enough examples we find that IoT devices (such as Raspberry PI's) perform very well [1]. Due to this good performance, the PI's are very cost-effective for the examples we chose.
-Future, work will include more compute-intensive tasks and additional benchmarks.
+A service registry can publicize and improve end user access to data from different sources, by overcoming some of the challenges inherent in describing and surfacing document content and format. publication, and discovery of information resources are enriched with metadata enabling the findability and reusability. While describing the interfaces and allow for the instantiation or the reuse of already instantiated services we address the accessibility and interoperability. With respect to analytics as a service, end users should be able to find various analytic services and similar services without having to individually search multiple ‘locations’ or databases, each built to operate on its own, unique storage and retrieval constructs. Through these descriptions automated service integration can be provisioned while targeting not only the functionality involved, but also allowing service level considerations to be addressed. Furthermore, such analytics services could provide significant security implications such as the protection of a database while only exposing a subset of approved analytics functions that are executed on the data sets. This includes partial and controlled sharing of data mashup that can be made available to the community and registered to make reuse easier without everyone having to replicate the service.
 
-However, our most significant gain from this project is the reduction in manpower and entry barrier it takes to create and deploy our AI services. Due to the generalized approach when using python functions developers and data scientists can naturally integrate more complex tasks as well as tasks that leverage cloud-specific AI services that are uniquely offered by particular providers. GAS Generator is an open-source project, and we appreciate contributions to the project. 
-
-\section*{Acknowledgment.}
+{\tiny
+\section*{\footnotesize Acknowledgment.}
 
 We would like to thank Lamara DeChelle Warren for initiating the contact of the UROC students so they can be part of this effort. 
-We would also like to thank
-B. Kegerreis,
-J. Beckford,
-J. Kandimalla,
-P. Shaw,
-I. Mishra,
-F. Wang, and A. Goldfarb for developing the service generator this work is leveraging. Finally, we would like to thank the NIST NBDIF working group for their input.
 
-\section*{References.}
-
-[1] Using GAS for Speedy Generation of Hybrid Multi-Cloud AutoGenerated AI Services
-G. von Laszewski,
-A. Orlowski,
-R. H. Otten,
-R. Markowitz,
-S. Gandhi,
-A. Chai,
-C. Wilson, and
-G. C. Fox,
-W. L. Chang
-\url{https://github.com/laszewski/laszewski.github.io/raw/master/papers/vonLaszewski-openapi.pdf}
-
-%\bibliographystyle{IEEEtran}
-%\bibliography{bib/references}
-
-\section*{Contact.} ~\\
-
-URL: \url{https://laszewski.github.io}\\
-Email: laszewski@gmail.com
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+}
 
 
 \end{multicols}
