@@ -1,9 +1,7 @@
-%\documentclass[letter,6pt]{article}
-\documentclass[A0,6pt]{article}
+\documentclass[fullpage,12pt]{article}
 
-\usepackage[tagged]{accessibility}
-
-\usepackage[margin=1cm,landscape]{geometry}
+%\usepackage[tagged]{accessibility}
+%\usepackage[margin=1cm]{geometry}
 
 \usepackage{multicol}
 \usepackage{tikz,lipsum,lmodern}
@@ -28,44 +26,29 @@
     pdfkeywords={multi-cloud, hybrid cloud, AI services, REST, cloudmesh}
 }
 
-\begin{document}
-\thispagestyle{empty}
-\vspace{-3.5cm}
+\title{Towards an AI Service Catalogue and Registry}
 
-
-\begin{figure}[!h]
-\begin{tcolorbox}[enhanced,
-  frame style,
-  colback=red!10,
-  colframe=red!75!black]
-
-{\Large\bf Towards an AI Service Catalogue and Registry}
-
-
-{\em Gregor von Laszewski$^{1,2}$,
+\author{Gregor von Laszewski$^{1,2}$,
 Henry Bobeck$^{2,*}$,
-Anthony Orlowski$^2$
-
-$^1$University of Virginia, 
-$^2$Indiana University, $^*$IU UROC Students \hfill {\footnotesize Contact:: laszewski@gmail.com, \url{https://laszewski.github.io}}
-
+Anthony Orlowski$^2$,\\
+Russell Reinsch$^3$,
+Geoffrey C. Fox$^1$\\
+\footnotesize $^1$University of Virginia, 
+$^2$Indiana University,
+\footnotesize $^3$McLean Systems Integration\\
+\footnotesize $^*$IU UROC Students \\
+{
+\footnotesize Contact: laszewski@gmail.com, \url{https://laszewski.github.io}\\
+\footnotesize Paper Source: \url{https://github.com/cyberaide/paper-uroc-2021/}\\
+\footnotesize Code: \url{https://github.com/cloudmesh/cloudmesh-catalog}}
 }
-\end{tcolorbox}
-\vspace{-24pt}
-\end{figure}
 
-\begin{multicols}{3}
 
-\makeatletter
-\renewcommand\section{\@startsection{section}{1}{\z@}%
-                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
-                                     {-1.5ex \@plus -.2ex}% Formerly 1.5ex \@plus .2ex
-                                     {\normalfont\normalsize\bfseries\underline}}
-\makeatother
-\footnotesize
+\begin{document}
 
-\vspace{-24pt}
-\section*{Introduction.}
+\maketitle
+
+\section{Introduction}
 
 Cloud providers offer a significant number of analytics services to its user community. Typically a provider advertises its own capabilities without regard of what other providers offer. In such a heterogeneous ecosystem it is difficult to quickly identify potential candidates for cloud services that can be used to bootstrap a sophisticated analytics workflow addressing a particular task. This also includes reuse of services in the same workflow by different providers. 
 
@@ -74,25 +57,32 @@ Developers require two lookup mechanisms. First, they require a high level {\bf 
 Through this architecture users have the ability to 
 (1) find quickly potential analytics services (2) find the details of the services (3) register instances of the services in a registry so they can be reused pragmatically  (4) enhance the catalogue and registry with custom designed analytics services (5) build customized catalogues and registries.
 
-\section*{Architecture.}
+\section{Architecture}
 
-We base our architecture on cloudmesh, an open-source hybrid multi-cloud toolkit. We integrated two new components that provides data scientists with the ability to catalogue and register REST services. Due to our previous effort we also allow the integration of analytics functions to create a REST service that can be provisioned and thus reused. This allows an easy pathway to integrate Services offered by various cloud providers, such as AWS, Azure, Google, and others (see Fig.~1).  
+We base our architecture on cloudmesh, an open-source hybrid multi-cloud toolkit. We integrated two new components that provides data scientists with the ability to catalogue and register REST services. Due to our previous effort we also allow the integration of analytics functions to create a REST service that can be provisioned and thus reused. This allows an easy pathway to integrate Services offered by various cloud providers, such as AWS, Azure, Google, and others (see Figure~\ref{fig:1}).  
 
+\begin{figure}[htb]
 \begin{center}
 \pdftooltip{\includegraphics[width=1.0\columnwidth]{images/arch-registry.pdf}
 }{This figure shows the architecture of the catalogue and registry services, as well as the possibility to create new analytics services with GAS.}
 \end{center}
 \vspace{-12pt}
-{\em Fig 1. Layered architecture of the cloudmesh Open\-API framework.}
+\caption{Layered architecture of the cloudmesh Open\-API framework.}
+\label{fig:1}
+\end{figure}
 
 The reason why we need to distinguish Catalogue from Registry is based on the fact that we support with the catalogue findability without going in too much details, while the Registry provides the ability to register the details of interaction with the service, but most importantly the instantiation of such a service to encourage reusability. Furthermore our implementation of the catalogue entries is independent from a REST specification, the registry makes explicit use of the registry. 
 
 With this division we can first identify candidates from the plethora of services available to us and in a second step evaluate their integration details into a REST service enhanced analytics workflow. Such workflows can also be represented as high level REST services and thus become subject of reusability and deployment in larger analytics service ecosystems. 
 
 
-\section*{AI Service Catalogue.}
-To make it easy for users to obtain a quick overview about available AI cloud services, we have limited the initial set of attributes to those that support findability. The attributes are listed in the next table. The catalogue is organized as a list of entries, where each entry contains a number of attributes. These attributes may be required or optional. 
+\section{AI Service Catalogue}
 
+To make it easy for users to obtain a quick overview about available AI cloud services, we have limited the initial set of attributes to those that support findability. The attributes are listed in Table~\ref{tab:cat}. The catalogue is organized as a list of entries, where each entry contains a number of attributes. These attributes may be required or optional. 
+
+\begin{table}[htb]
+\caption{AI Service Catalogue.}
+\label{tab:cat}
 \resizebox{0.9\columnwidth}{!}{%
 \begin{tabular}{p{3cm}p{8cm}p{1cm}}
 Name	& Description	& Required \\
@@ -122,19 +112,18 @@ Authors	& contact details of the people or organization responsible for the serv
 Data	& Description on how data is managed	& O \\
 \hline
 \multicolumn{3}{l}{\OK = Required; O = Optional}
-\end{tabular}
-}
+\end{tabular}}
+\end{table}
 
+\section{AI Service Registry} 
 
-\section*{AI Service Registry} The goal of an analytics service registry is to establish registries to locate and consume analytics services 
+The goal of an analytics service registry is to establish registries to locate and consume analytics services 
 with persistent identifiers across organizations.  It can serve as a public, private, or federated registry. In case of a federated registry, more than one registry can be joined, to provide the user the impression of a single registry.
-Within the analytics services we distinguish two classes. The first class are instantiated (running) services that are offered by a service provider and allow direct reuse. The second class are library providers that distribute analytics activity not as an instantiated service, but as a source code library which can be deployed as a service. The list of attributes are presented in the next table.
+Within the analytics services we distinguish two classes. The first class are instantiated (running) services that are offered by a service provider and allow direct reuse. The second class are library providers that distribute analytics activity not as an instantiated service, but as a source code library which can be deployed as a service. The list of attributes are presented in Table \ref{tab:reg}.
 
-\section*{Implementation.}
-
-The implementation of the catalogue and registry are available in GitHub as an open source project. It is building a basis for discussions taking place in the
-NIST big data working group \cite{github-cloudmesh-catalogue}.
-
+\begin{table}[htb]
+\caption{AI Service Registry}
+\label{tab:reg}
 \resizebox{0.9\columnwidth}{!}{%
 \begin{tabular}{p{3cm}p{11cm}p{0.5cm}p{0.5cm}}
 Name	& Description	& \rot{\shortstack{Service\\ provider}}	& \rot{\shortstack{Library\\ provider}} \\
@@ -176,22 +165,24 @@ DataIntegration &	In case of big data the data cannot be provided as a parameter
 \multicolumn{3}{l}{\OK = Required; O = Optional}
 \end{tabular}
 }
+\end{table}
 
 
+\section{Implementation.}
 
-\section*{Conclusion.}
+The implementation of the catalogue and registry are available in GitHub as an open source project. It is building a basis for discussions taking place in the
+NIST big data working group \cite{github-cloudmesh-catalogue}.
+
+\section{Conclusion}
 
 A service catalogue and registry can publicize and improve end user access to data from different sources by overcoming some of the challenges inherent in describing and distributing document content and format. Publication and discovery of information resources that are enriched with metadata enable the findability and reusability of analytics services. By describing the interfaces and allowing for the instantiation or the reuse of already instantiated services we address accessibility and interoperability requirements. With respect to analytics as a service, end users should be able to find various analytic services and similar services without having to individually search multiple ‘locations’ or databases, each built to operate on its own, with unique storage and retrieval constructs. Through these descriptions, automated service integration can be provisioned while targeting not only the functionality involved, but also allowing service level considerations to be addressed. Furthermore, such analytics services could provide significant security implications such as the protection of a database while only exposing a subset of approved analytics functions that are approved for execution on the data sets. This includes partial and controlled sharing of data mashups that can be made available to the community and registered to make reuse easier without requiring service replication.
 
-{\tiny
-\section*{\footnotesize Acknowledgment.}
+\section*{Acknowledgment}
 
 We would like to thank Lamara DeChelle Warren for initiating the contact of the UROC students so they can be part of this effort. 
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
-}
 
 
-\end{multicols}
 \end{document}
