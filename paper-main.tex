@@ -1,5 +1,6 @@
-\documentclass[fullpage,12pt]{article}
+\documentclass[12pt]{article}
 
+\usepackage{fullpage}
 %\usepackage[tagged]{accessibility}
 %\usepackage[margin=1cm]{geometry}
 
@@ -20,7 +21,8 @@
     pdfauthor={Gregor von Laszewski,
                Henry Bobeck,
                Anthony Orlowski,
-               Richard Otten},
+               Russell Reinsch, 
+               Geoffrey C. Fox},
     pdfsubject={UROC},
     pdftitle={Towards an AI Service Catalogue and Registry},
     pdfkeywords={multi-cloud, hybrid cloud, AI services, REST, cloudmesh}
@@ -59,7 +61,7 @@ Through this architecture users have the ability to
 
 \section{Architecture}
 
-We base our architecture on cloudmesh, an open-source hybrid multi-cloud toolkit. We integrated two new components that provides data scientists with the ability to catalogue and register REST services. Due to our previous effort we also allow the integration of analytics functions to create a REST service that can be provisioned and thus reused. This allows an easy pathway to integrate Services offered by various cloud providers, such as AWS, Azure, Google, and others (see Figure~\ref{fig:1}).  
+We base our architecture on cloudmesh, an open-source hybrid multi-cloud toolkit. We integrated two new components that provide data scientists with the ability to catalogue and register REST services. Due to our previous effort we also allow the integration of analytics functions to create a REST service that can be provisioned and thus reused. This allows an easy pathway to integrate Services offered by various cloud providers, such as AWS, Azure, Google, and others (see Figure~\ref{fig:1}).  
 
 \begin{figure}[htb]
 \begin{center}
@@ -71,7 +73,7 @@ We base our architecture on cloudmesh, an open-source hybrid multi-cloud toolkit
 \label{fig:1}
 \end{figure}
 
-The reason why we need to distinguish Catalogue from Registry is based on the fact that we support with the catalogue findability without going in too much details, while the Registry provides the ability to register the details of interaction with the service, but most importantly the instantiation of such a service to encourage reusability. Furthermore our implementation of the catalogue entries is independent from a REST specification, the registry makes explicit use of the registry. 
+The reason why we need to distinguish Catalogue from Registry is based on the fact that we support with the catalogue findability without going in too much details, while the Registry provides the ability to register the details of interaction with the service, but most importantly the instantiation of such a service to encourage reusability. Furthermore our implementation of the catalogue entries is independent from a REST specification.
 
 With this division we can first identify candidates from the plethora of services available to us and in a second step evaluate their integration details into a REST service enhanced analytics workflow. Such workflows can also be represented as high level REST services and thus become subject of reusability and deployment in larger analytics service ecosystems. 
 
@@ -172,6 +174,53 @@ DataIntegration &	In case of big data the data cannot be provided as a parameter
 
 The implementation of the catalogue and registry are available in GitHub as an open source project. It is building a basis for discussions taking place in the
 NIST big data working group \cite{github-cloudmesh-catalogue}.
+
+The implementation contains currently only a prototype. We like TODO{russell}{change 'like' to 'intend'} to add a commandline interface that goes beyond the current available implementation. 
+
+The commandline tool will include the following functionality:
+
+\begin{verbatim}
+Usage:
+  cms catalog list
+  cms catalog init --directory=DIR
+  cms catalog query --name=NAME
+  cms catalog table --attributes=ATTRIBUTES
+  cms catalog start
+  cms catalog stop
+  cms catalog status
+
+Arguments:
+  DIR   the directory path containing the entries
+  NAME  the name of the entry
+  ATTRIBUTES  string with commas i.e. 'id,name'
+
+Description:
+
+    catalog list
+        lists the content of the catalog
+
+    catalog init --directory=DIR
+        initializes the catalag from a directory
+
+    catalog query --name=NAME
+        queries the catalog by a named entry. 
+        This is just a preliminary
+        function and needs to be improved. 
+        YAMLDB provides a much better query.
+
+    catalog table --attributes=ATTRIBUTES
+        prints the content of the catalog in table form
+
+    catalog start --port=PORT
+        starts the catalog service
+
+    catalog stop
+        stops the catalog service
+
+    catalog status
+        returns the status of the service
+
+\end{verbatim}
 
 \section{Conclusion}
 
